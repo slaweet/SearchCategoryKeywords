@@ -1,4 +1,4 @@
-This extension replaces the original EventsList from the
-gnome-shell panel with a EventsTable that shows events
-in a grid as rectangles with height proportional to event 
-duration.
+In Gnome shell overview search this extension allows you to search 
+only in specific category (Aplications, Settings, Recent Used, etc.). 
+It tries to match first word of the search term against prefixes 
+of category names.
