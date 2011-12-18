@@ -2,3 +2,8 @@ In Gnome shell overview search this extension allows you to search
 only in specific category (Aplications, Settings, Recent Used, etc.). 
 It tries to match first word of the search term against prefixes 
 of category names.
+Usualy you need only first letter of a category, but if in some 
+localization more categories have the same first letter, you can 
+distinguish between them with any category name prefix.
+This functionality is used only when you search term cosists of 
+at least two words and the first word is prefix of a category name.
