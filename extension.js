@@ -1,29 +1,27 @@
 /**
  * SearchCategoryKeywords extension
- * v0.1
+ * v0.1.1
  *
  */
-const Lang = imports.lang;
-const St = imports.gi.St;
 
 const Main = imports.ui.main;
-const PopupMenu = imports.ui.popupMenu;
-const Search = imports.ui.search;
-const SearchDisplay = imports.ui.searchDisplay;
 
-function SearchByProviderSystem() {
+function SearchCategoryKeywordsExtension() {
     this._init();
 }
 
-SearchByProviderSystem.prototype = {
-    __proto__: Search.SearchSystem.prototype,
+SearchCategoryKeywordsExtension.prototype = {
+
+    _init: function() {
+        this.searchSystem = Main.overview._viewSelector._searchTab._searchSystem;
+    },
 
     updateSearchResults: function(terms) {
         if (!terms)
             return;
 
         if(terms.length <= 1){
-			Search.SearchSystem.prototype.updateSearchResults.call(this, terms);
+			this.originalUpdateSearchResults(terms);
 			return;
         }
 
@@ -31,12 +29,12 @@ SearchByProviderSystem.prototype = {
         let categorySearchActive = false;
         let keyWord = terms[0]
         for (let i = 0; i < this._providers.length; i++) {
-            activeCategory.push(keyWord.toUpperCase() == this._providers[i].title.substring(0, keyWord.length))
+            activeCategory.push(this._providers[i].title.indexOf(keyWord.toUpperCase()) == 0)
             categorySearchActive |= activeCategory[i];
         }
 
         if(!categorySearchActive){
-			Search.SearchSystem.prototype.updateSearchResults.call(this, terms);
+			this.originalUpdateSearchResults(terms);
 			return;
         }
 
@@ -83,33 +81,16 @@ SearchByProviderSystem.prototype = {
         this.emit('search-completed', results);
     },
 
-}
-
-function SearchCategoryKeywordsExtension() {
-    this._init();
-}
-
-SearchCategoryKeywordsExtension.prototype = {
-    _init: function() {
-        let searchTab = Main.overview._viewSelector._searchTab;
-        this._providers = searchTab._searchSystem._providers;
-    },
-
-    _update: function(searchSystem) {
-        let searchTab = Main.overview._viewSelector._searchTab;
-        searchTab._searchSystem = searchSystem;
-        searchTab._searchResults = new SearchDisplay.SearchResults(searchTab._searchSystem, searchTab._openSearchSystem);
-        searchTab.page.set_child(searchTab._searchResults.actor);
-
-        for (let i = 0; i < this._providers.length; i++) {
-            searchTab.addSearchProvider(this._providers[i]);
+    disable: function() {
+        if(this.searchSystem.originalUpdateSearchResults) {
+            this.searchSystem.updateSearchResults = this.searchSystem.originalUpdateSearchResults;
+            this.searchSystem.originalUpdateSearchResults = undefined;
         }
     },
-    disable: function() {
-        this._update(new Search.SearchSystem());
-    },
     enable: function() {
-        this._update(new SearchByProviderSystem());
+        if(!this.searchSystem.originalUpdateSearchResults)
+            this.searchSystem.originalUpdateSearchResults = this.searchSystem.updateSearchResults;
+        this.searchSystem.updateSearchResults = this.updateSearchResults;
     }	   
 }
 
