@@ -7,3 +7,10 @@ localization more categories have the same first letter, you can
 distinguish between them with any category name prefix.
 This functionality is used only when you search term cosists of 
 at least two words and the first word is prefix of a category name.
+Sample searches (try some of these to get the idea how it works):
+setting key
+set keyb
+s k
+recent avi
+re pdf
+r jpg
